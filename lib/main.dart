@@ -2,18 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/favorites_provider.dart';
 import 'providers/theme_provider.dart';
+import 'providers/movies_provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/favorites_screen.dart';
 import 'screens/profile_screen.dart';
-import 'screens/transition_demo.dart';
-import 'screens/navigation_examples.dart';
+// Replace old tabs with new browse/search (will be created next)
+import 'screens/search_screen.dart';
+import 'screens/browse_screen.dart';
 
 void main() {
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => FavoritesProvider()),
-        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()..setThemeMode(ThemeMode.dark)), // Default to dark
+        ChangeNotifierProvider(create: (_) => MoviesProvider()),
       ],
       child: const MyApp(),
     ),
@@ -35,28 +38,26 @@ class MyApp extends StatelessWidget {
             useMaterial3: true,
             brightness: Brightness.light,
             appBarTheme: const AppBarTheme(
-              backgroundColor: Colors.deepPurple,
-              foregroundColor: Colors.white,
-              elevation: 2.0,
+              backgroundColor: Colors.transparent,
+              foregroundColor: Colors.black87,
+              elevation: 0.0,
             ),
+            scaffoldBackgroundColor: Colors.grey[50],
           ),
           darkTheme: ThemeData(
             colorSchemeSeed: Colors.deepPurple,
             useMaterial3: true,
             brightness: Brightness.dark,
-            appBarTheme: AppBarTheme(
-              backgroundColor: Colors.deepPurple.shade700,
+            appBarTheme: const AppBarTheme(
+              backgroundColor: Colors.transparent,
               foregroundColor: Colors.white,
-              elevation: 2.0,
+              elevation: 0.0,
             ),
+            scaffoldBackgroundColor: const Color(0xFF0A0A0A), // Netflix-like near black
           ),
           themeMode: themeProvider.themeMode,
           home: const MainScreen(),
-          // Route nommées (exemple de navigation nommée)
-          routes: {
-            '/home': (context) => const MainScreen(),
-            '/named-demo': (context) => const NamedRouteDemoPage(),
-          },
+          // Note: Removing named route demo since we are building a real app now.
         );
       },
     );
@@ -75,9 +76,9 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _screens = const [
     HomeScreen(),
+    SearchScreen(),
+    BrowseScreen(),
     FavoritesScreen(),
-    NavigationExamplesScreen(),
-    TransitionDemoScreen(),
     ProfileScreen(),
   ];
 
@@ -89,6 +90,9 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Determine the color based on current theme to make the bottom nav look integrated
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Scaffold(
       body: IndexedStack(
         index: _selectedIndex,
@@ -98,25 +102,25 @@ class _MainScreenState extends State<MainScreen> {
         type: BottomNavigationBarType.fixed,
         currentIndex: _selectedIndex,
         onTap: _onNavItemTapped,
-        backgroundColor: Colors.deepPurple,
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white70,
+        backgroundColor: isDark ? const Color(0xFF141414) : Colors.white,
+        selectedItemColor: isDark ? Colors.white : Colors.deepPurple,
+        unselectedItemColor: isDark ? Colors.white54 : Colors.black54,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.movie),
-            label: 'Films',
+            icon: Icon(Icons.home_filled),
+            label: 'Accueil',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Recherche',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.explore),
+            label: 'Explorer',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.favorite),
             label: 'Favoris',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.navigation),
-            label: 'Navigation',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.animation),
-            label: 'Transitions',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),

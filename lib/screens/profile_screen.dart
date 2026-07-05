@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/favorites_provider.dart';
 import 'settings_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -9,93 +11,82 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profil'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SettingsScreen()),
+              );
+            },
+          ),
+        ],
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                width: 120.0,
-                height: 120.0,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.deepPurple.withValues(alpha: 0.3),
-                ),
-                child: const Icon(
-                  Icons.person,
-                  size: 80.0,
-                  color: Colors.deepPurple,
-                ),
-              ),
-              const SizedBox(height: 20.0),
-              const Text(
-                'Cinéphile',
-                style: TextStyle(
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 8.0),
-              const Text(
-                'Amoureux des films',
-                style: TextStyle(
-                  fontSize: 16.0,
-                  color: Colors.grey,
-                ),
-              ),
-              const SizedBox(height: 40.0),
-              const Divider(),
-              const SizedBox(height: 20.0),
-              const Text(
-                'À propos de cette application',
-                style: TextStyle(
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 16.0),
-              Text(
-                'Films App v1.0.0\n\n'
-                'Une application Flutter pour découvrir et gérer vos films préférés.\n\n'
-                'Démonstration des concepts de navigation Flutter:\n'
-                '• Navigation par push/pop\n'
-                '• BottomNavigationBar\n'
-                '• Passage de paramètres\n'
-                '• PageRouteBuilder pour les transitions',
-                style: TextStyle(
-                  fontSize: 14.0,
-                  height: 1.6,
-                  color: Colors.grey[700],
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 40.0),
-              ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const SettingsScreen(),
-                    ),
-                  );
-                },
-                icon: const Icon(Icons.settings),
-                label: const Text('Paramètres'),
-                style: ElevatedButton.styleFrom(
+      body: Consumer<FavoritesProvider>(
+        builder: (context, favoritesProvider, child) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const CircleAvatar(
+                  radius: 50,
                   backgroundColor: Colors.deepPurple,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 12.0,
-                    horizontal: 20.0,
+                  child: Icon(Icons.person, size: 50, color: Colors.white),
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'Utilisateur Cinéphile',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 10),
+                const Text(
+                  'Membre depuis 2023',
+                  style: TextStyle(
+                    color: Colors.grey,
+                  ),
+                ),
+                const SizedBox(height: 40),
+                
+                // Movie Stats
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _buildStatColumn('Films Favoris', favoritesProvider.count.toString()),
+                    const SizedBox(width: 40),
+                    _buildStatColumn('Avis laissés', '0'), // Placeholder for future feature
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildStatColumn(String label, String value) {
+    return Column(
+      children: [
+        Text(
+          value,
+          style: const TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+            color: Colors.deepPurple,
           ),
         ),
-      ),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: const TextStyle(
+            color: Colors.grey,
+          ),
+        ),
+      ],
     );
   }
 }

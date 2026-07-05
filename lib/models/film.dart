@@ -1,5 +1,7 @@
+import 'imdb_title.dart' as import_imdb;
+
 class Film {
-  final int id;
+  final String id;
   final String title;
   final String director;
   final int year;
@@ -21,7 +23,7 @@ class Film {
 
   factory Film.fromJson(Map<String, dynamic> json) {
     return Film(
-      id: json['id'] as int,
+      id: json['id'].toString(),
       title: json['title'] as String,
       director: json['director'] as String,
       year: json['year'] as int,
@@ -46,7 +48,7 @@ class Film {
   }
 
   Film copyWith({
-    int? id,
+    String? id,
     String? title,
     String? director,
     int? year,
@@ -64,6 +66,25 @@ class Film {
       genre: genre ?? this.genre,
       rating: rating ?? this.rating,
       imageUrl: imageUrl ?? this.imageUrl,
+    );
+  }
+
+  factory Film.fromImdbTitle(import_imdb.ImdbTitle title) {
+    // Attempt to extract director from the lists
+    String directorStr = 'Unknown Director';
+    if (title.directors.isNotEmpty) {
+      directorStr = title.directors.map((d) => d.displayName).join(', ');
+    }
+
+    return Film(
+      id: title.id ?? '',
+      title: title.primaryTitle ?? 'Unknown Title',
+      director: directorStr,
+      year: title.startYear ?? 0,
+      description: title.plot ?? 'No description available.',
+      genre: title.genres.isNotEmpty ? title.genres.first : 'Unknown Genre',
+      rating: title.rating?.aggregateRating ?? 0.0,
+      imageUrl: title.primaryImage?.url ?? '',
     );
   }
 }
