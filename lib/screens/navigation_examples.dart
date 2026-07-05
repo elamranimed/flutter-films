@@ -9,14 +9,11 @@ class NavigationExamplesScreen extends StatefulWidget {
 }
 
 class _NavigationExamplesScreenState extends State<NavigationExamplesScreen> {
-  int _navigationCounter = 0;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Exemples de navigation'),
-        backgroundColor: Colors.deepPurple,
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -32,6 +29,8 @@ class _NavigationExamplesScreenState extends State<NavigationExamplesScreen> {
                 ),
               ),
               const SizedBox(height: 20.0),
+
+              // 1. Navigator.push()
               _buildExampleCard(
                 title: 'Navigator.push()',
                 description:
@@ -50,33 +49,35 @@ class _NavigationExamplesScreenState extends State<NavigationExamplesScreen> {
                 },
               ),
               const SizedBox(height: 15.0),
+
+              // 2. pushReplacement() — fully working demo
               _buildExampleCard(
-                title: 'pushReplacementNamed()',
+                title: 'pushReplacement()',
                 description:
                     'Remplace la page actuelle par une nouvelle dans la pile',
                 onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Remplacera la page actuelle'),
-                      duration: Duration(seconds: 2),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const FakeLoginPage(),
                     ),
                   );
                 },
               ),
               const SizedBox(height: 15.0),
+
+              // 3. pushNamed() — fully working demo
               _buildExampleCard(
                 title: 'Navigator.pushNamed()',
-                description: 'Navigation par route nommée sans paramètre',
+                description:
+                    'Navigation par route nommée vers /named-demo',
                 onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Navigation par route nommée'),
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
+                  Navigator.pushNamed(context, '/named-demo');
                 },
               ),
               const SizedBox(height: 15.0),
+
+              // 4. Passage de paramètres
               _buildExampleCard(
                 title: 'Passage de paramètres',
                 description:
@@ -85,7 +86,8 @@ class _NavigationExamplesScreenState extends State<NavigationExamplesScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const ParameterPassingPage(
+                      builder: (context) =>
+                          const ParameterPassingPage(
                         title: 'Film très populaire',
                         rating: 9.2,
                       ),
@@ -94,20 +96,24 @@ class _NavigationExamplesScreenState extends State<NavigationExamplesScreen> {
                 },
               ),
               const SizedBox(height: 15.0),
+
+              // 5. popUntil() — fully working demo
               _buildExampleCard(
                 title: 'popUntil()',
                 description:
-                    'Revient en arrière jusqu\'à une condition spécifique',
+                    'Naviguez A → B → C puis revenez au début',
                 onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Utilisé pour nettoyer la pile'),
-                      duration: Duration(seconds: 2),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const PopUntilPageA(),
                     ),
                   );
                 },
               ),
               const SizedBox(height: 15.0),
+
+              // 6. Navigator.pop()
               _buildExampleCard(
                 title: 'Navigator.pop()',
                 description: 'Revient à la page précédente',
@@ -118,13 +124,15 @@ class _NavigationExamplesScreenState extends State<NavigationExamplesScreen> {
                       builder: (context) => const DetailsPage(
                         title: 'Navigator.pop()',
                         description:
-                            'Utilisez le bouton retour pour revenir en arrière',
+                            'Utilisez le bouton retour pour revenir en arrière avec Navigator.pop()',
                       ),
                     ),
                   );
                 },
               ),
               const SizedBox(height: 15.0),
+
+              // 7. Transitions personnalisées
               _buildExampleCard(
                 title: 'Transitions personnalisées',
                 description:
@@ -133,7 +141,8 @@ class _NavigationExamplesScreenState extends State<NavigationExamplesScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const TransitionExamplePage(),
+                      builder: (context) =>
+                          const TransitionExamplePage(),
                     ),
                   );
                 },
@@ -168,6 +177,8 @@ class _NavigationExamplesScreenState extends State<NavigationExamplesScreen> {
   }
 }
 
+// ======== Reusable Details Page ========
+
 class DetailsPage extends StatelessWidget {
   final String title;
   final String description;
@@ -183,7 +194,6 @@ class DetailsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
-        backgroundColor: Colors.deepPurple,
       ),
       body: Center(
         child: Column(
@@ -192,7 +202,7 @@ class DetailsPage extends StatelessWidget {
             Icon(
               Icons.info,
               size: 80.0,
-              color: Colors.deepPurple.withOpacity(0.5),
+              color: Colors.deepPurple.withValues(alpha: 0.5),
             ),
             const SizedBox(height: 20.0),
             Padding(
@@ -205,11 +215,10 @@ class DetailsPage extends StatelessWidget {
             ),
             const SizedBox(height: 30.0),
             ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
+              onPressed: () => Navigator.pop(context),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.deepPurple,
+                foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(
                   vertical: 12.0,
                   horizontal: 30.0,
@@ -217,7 +226,7 @@ class DetailsPage extends StatelessWidget {
               ),
               child: const Text(
                 'Retour',
-                style: TextStyle(color: Colors.white, fontSize: 16.0),
+                style: TextStyle(fontSize: 16.0),
               ),
             ),
           ],
@@ -226,6 +235,8 @@ class DetailsPage extends StatelessWidget {
     );
   }
 }
+
+// ======== Parameter Passing Page ========
 
 class ParameterPassingPage extends StatelessWidget {
   final String title;
@@ -242,7 +253,6 @@ class ParameterPassingPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Paramètres reçus'),
-        backgroundColor: Colors.deepPurple,
       ),
       body: Center(
         child: Column(
@@ -265,7 +275,8 @@ class ParameterPassingPage extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(20.0),
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.deepPurple, width: 2.0),
+                border: Border.all(
+                    color: Colors.deepPurple, width: 2.0),
                 borderRadius: BorderRadius.circular(8.0),
               ),
               child: Column(
@@ -284,11 +295,10 @@ class ParameterPassingPage extends StatelessWidget {
             ),
             const SizedBox(height: 30.0),
             ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
+              onPressed: () => Navigator.pop(context),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.deepPurple,
+                foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(
                   vertical: 12.0,
                   horizontal: 30.0,
@@ -296,7 +306,7 @@ class ParameterPassingPage extends StatelessWidget {
               ),
               child: const Text(
                 'Retour',
-                style: TextStyle(color: Colors.white, fontSize: 16.0),
+                style: TextStyle(fontSize: 16.0),
               ),
             ),
           ],
@@ -306,6 +316,8 @@ class ParameterPassingPage extends StatelessWidget {
   }
 }
 
+// ======== Transition Example Page ========
+
 class TransitionExamplePage extends StatelessWidget {
   const TransitionExamplePage({Key? key}) : super(key: key);
 
@@ -314,7 +326,6 @@ class TransitionExamplePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Animation personnalisée'),
-        backgroundColor: Colors.deepPurple,
       ),
       body: Center(
         child: Column(
@@ -341,15 +352,328 @@ class TransitionExamplePage extends StatelessWidget {
             ),
             const SizedBox(height: 30.0),
             ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
+              onPressed: () => Navigator.pop(context),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.deepPurple,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Retour'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ======== Fake Login Page (pushReplacement demo) ========
+
+class FakeLoginPage extends StatelessWidget {
+  const FakeLoginPage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Connexion (démo)'),
+      ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.login,
+                size: 80.0,
+                color: Colors.deepPurple,
+              ),
+              const SizedBox(height: 20.0),
+              const Text(
+                'Page de connexion simulée',
+                style: TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 10.0),
+              const Text(
+                'Cliquez sur "Se connecter" pour voir pushReplacement en action.\n'
+                'La page de login sera remplacée par le tableau de bord.',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 14.0, color: Colors.grey),
+              ),
+              const SizedBox(height: 30.0),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            const FakeDashboardPage(),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.deepPurple,
+                    foregroundColor: Colors.white,
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 14.0),
+                  ),
+                  child: const Text(
+                    'Se connecter',
+                    style: TextStyle(fontSize: 16.0),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ======== Fake Dashboard Page (pushReplacement target) ========
+
+class FakeDashboardPage extends StatelessWidget {
+  const FakeDashboardPage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Tableau de bord'),
+      ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.dashboard,
+                size: 80.0,
+                color: Colors.green,
+              ),
+              const SizedBox(height: 20.0),
+              const Text(
+                'Bienvenue sur le tableau de bord!',
+                style: TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 10.0),
+              const Text(
+                'pushReplacement a remplacé la page de login.\n'
+                'Le bouton retour ne ramène PAS à la page de connexion,\n'
+                'il revient directement aux exemples de navigation.',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 14.0, color: Colors.grey),
+              ),
+              const SizedBox(height: 30.0),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(context),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepPurple,
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text('Retour aux exemples'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ======== popUntil Demo Pages (A → B → C) ========
+
+class PopUntilPageA extends StatelessWidget {
+  const PopUntilPageA({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Page A'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.looks_one,
+              size: 80.0,
+              color: Colors.blue,
+            ),
+            const SizedBox(height: 20.0),
+            const Text(
+              'Page A (1ère page)',
+              style: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 10.0),
+            const Text(
+              'Naviguez vers Page B, puis Page C.\n'
+              'Depuis Page C, popUntil reviendra\n'
+              'directement à la page de départ.',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 14.0, color: Colors.grey),
+            ),
+            const SizedBox(height: 30.0),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const PopUntilPageB(),
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  vertical: 12.0,
+                  horizontal: 30.0,
+                ),
               ),
               child: const Text(
-                'Retour',
-                style: TextStyle(color: Colors.white),
+                'Aller à Page B →',
+                style: TextStyle(fontSize: 16.0),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class PopUntilPageB extends StatelessWidget {
+  const PopUntilPageB({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Page B'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.looks_two,
+              size: 80.0,
+              color: Colors.orange,
+            ),
+            const SizedBox(height: 20.0),
+            const Text(
+              'Page B (2ème page)',
+              style: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 10.0),
+            const Text(
+              'Continuez vers Page C pour voir popUntil en action.',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 14.0, color: Colors.grey),
+            ),
+            const SizedBox(height: 30.0),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const PopUntilPageC(),
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.orange,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  vertical: 12.0,
+                  horizontal: 30.0,
+                ),
+              ),
+              child: const Text(
+                'Aller à Page C →',
+                style: TextStyle(fontSize: 16.0),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class PopUntilPageC extends StatelessWidget {
+  const PopUntilPageC({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Page C'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.looks_3,
+              size: 80.0,
+              color: Colors.red,
+            ),
+            const SizedBox(height: 20.0),
+            const Text(
+              'Page C (3ème page)',
+              style: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 10.0),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 30.0),
+              child: Text(
+                'Cliquez le bouton ci-dessous pour exécuter:\n'
+                'Navigator.popUntil(context, (route) => route.isFirst)\n\n'
+                'Cela nettoie toute la pile et revient à la page initiale.',
+                textAlign: TextAlign.center,
+                style:
+                    TextStyle(fontSize: 14.0, color: Colors.grey),
+              ),
+            ),
+            const SizedBox(height: 30.0),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.popUntil(
+                    context, (route) => route.isFirst);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  vertical: 12.0,
+                  horizontal: 30.0,
+                ),
+              ),
+              child: const Text(
+                'popUntil() → Retour au début',
+                style: TextStyle(fontSize: 16.0),
               ),
             ),
           ],

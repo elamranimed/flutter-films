@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'settings_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -8,7 +9,6 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profil'),
-        backgroundColor: Colors.deepPurple,
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -21,7 +21,7 @@ class ProfileScreen extends StatelessWidget {
                 height: 120.0,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.deepPurple.withOpacity(0.3),
+                  color: Colors.deepPurple.withValues(alpha: 0.3),
                 ),
                 child: const Icon(
                   Icons.person,
@@ -74,10 +74,10 @@ class ProfileScreen extends StatelessWidget {
               const SizedBox(height: 40.0),
               ElevatedButton.icon(
                 onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Paramètres à venir...'),
-                      duration: Duration(seconds: 2),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SettingsScreen(),
                     ),
                   );
                 },
@@ -85,6 +85,7 @@ class ProfileScreen extends StatelessWidget {
                 label: const Text('Paramètres'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.deepPurple,
+                  foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(
                     vertical: 12.0,
                     horizontal: 20.0,
